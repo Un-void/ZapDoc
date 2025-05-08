@@ -13,6 +13,7 @@ const LandingPage = () => {
                     <ul className="flex items-center space-x-4 md:space-x-8">
                         <li><Link to="/login" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Log In</Link></li>
                         <li><Link to="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Sign Up</Link></li>
+                        <li><Link to="/contact" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Contact us</Link></li>
                     </ul>
                 </nav>
             </header>
@@ -43,7 +44,7 @@ const LandingPage = () => {
             <section className="py-16 px-8 md:px-16 lg:px-24 bg-gray-50">
                 <div className="mx-auto items-center">
                     <div>
-                        <h2 className="text-4xl font-semibold text-gray-800 mb-4 text-indigo-600">
+                        <h2 className="text-4xl font-semibol mb-4 text-indigo-600">
                             Effortless Appointment Booking
                         </h2>
                         <p className="text-gray-600 leading-relaxed mb-6 text-2xl">
