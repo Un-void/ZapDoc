@@ -37,7 +37,7 @@ const SpecialtyGrid = () => {
                   ${isHovered ? 'scale-110 bg-blue-400' : isAnyHovered ? 'scale-90 opacity-70' : 'scale-100'}
                 `}
               >
-                <div className="mb-2">{specialty.icon}</div>
+                <div className="mb-2" loading="lazy">{specialty.icon}</div>
                 <p className="font-semibold text-center text-sm">{specialty.name}</p>
               </Link>
             );

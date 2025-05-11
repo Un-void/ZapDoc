@@ -18,9 +18,13 @@ const LandingPage = () => {
                 </nav>
             </header>
             <section className="bg-indigo-50 py-20 md:py-32 px-8 md:px-16 lg:px-24">
-                <div className="container mx-auto text-center my-8">
-                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-indigo-800 mb-6">Your Health, Simplified.</h1>
-                    <p className="text-lg md:text-xl text-gray-700 mb-12">Find the right doctor and book appointments effortlessly.</p>
+                <div className="container mx-auto text-center">
+                    <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-indigo-800 mb-6">
+                        Your Health, Simplified.
+                    </h1>
+                    <p className="text-lg md:text-xl text-gray-700 mb-12">
+                        Find the right doctor and book appointments effortlessly.
+                    </p>
                     <Link to="/search" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-8 rounded-full shadow-lg transition duration-300 ease-in-out">
                         Find a Doctor
                     </Link>
@@ -36,7 +40,7 @@ const LandingPage = () => {
                             Access a diverse range of highly qualified doctors across various specializations. From cardiology to dermatology, find the expert you need.
                         </p>
                         <ul className="list-disc list-inside text-gray-600">
-                        <SpecialtyGrid />
+                            <SpecialtyGrid />
                         </ul>
                     </div>
                 </div>

@@ -44,7 +44,7 @@ const LogIn = () => {
     return (
         <div className="bg-gray-100 min-h-screen flex items-center justify-center font-sans">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
-                <h2 className="text-3xl font-bold text-indigo-600 mb-6 text-center">Log In to ZapDoc</h2>
+                <h2 className="text-2xl font-bold mb-6 text-center">Log In to <Link className="text-indigo-600 text-3xl" to={'/'}>ZapDoc</Link></h2>
                 {error && <div className="bg-red-100 text-red-700 p-3 rounded mb-4">{error}</div>}
                 {success && <div className="bg-green-100 text-green-700 p-3 rounded mb-4">{success}</div>}
                 <form onSubmit={handleSubmit}>
@@ -98,4 +98,4 @@ const LogIn = () => {
     );
 };
 
-export default LogIn;
+export default LogIn
