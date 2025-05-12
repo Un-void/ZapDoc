@@ -14,6 +14,8 @@ const LandingPage = () => {
                         <li><Link to="/login" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Log In</Link></li>
                         <li><Link to="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Sign Up</Link></li>
                         <li><Link to="/contact" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Contact us</Link></li>
+                        <li><Link to="/doclog" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Doc_LogIn</Link></li>
+                        <li><Link to="/docreg" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Doc_Register</Link></li>
                     </ul>
                 </nav>
             </header>

@@ -4,6 +4,8 @@ import LandingPage from "./Components/LandingPage";
 import SignUp from "./Components/SignUp";
 import LogIn from "./Components/Login";
 import ContactUs from "./Components/ContactUs";
+import DoctorLogin from "./Components/DoctorLogin";
+import DoctorRegistration from "./Components/DoctorRegistration";
 
 const routes = createBrowserRouter([
     {
@@ -25,6 +27,14 @@ const routes = createBrowserRouter([
             {
                 path: "/contact",
                 Component: ContactUs
+            },
+            {
+                path: "/docreg",
+                Component: DoctorRegistration
+            },
+            {
+                path: "/doclog",
+                Component: DoctorLogin
             }
         ]
     }   
