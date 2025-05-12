@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router";
 import App from "./App";
 import LandingPage from "./Components/LandingPage";
 import SignUp from "./Components/SignUp";
-import LogIn from "./Components/LogIn";
+import LogIn from "./Components/Login";
 import ContactUs from "./Components/ContactUs";
 
 const routes = createBrowserRouter([
