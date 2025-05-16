@@ -52,11 +52,14 @@ router.post('/login', async (req, res) => {
     }
 
     // Create a JWT token
-    const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
-    });
+    const token = jwt.sign(
+      { id: user._id, email: user.email, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' }
+    );
 
-    res.json({ token });
+    // Return token and role
+    res.json({ token, role: user.role }); // <-- Add role here
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

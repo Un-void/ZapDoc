@@ -6,6 +6,8 @@ import LogIn from "./Components/Login";
 import ContactUs from "./Components/ContactUs";
 import DoctorLogin from "./Components/DoctorLogin";
 import DoctorRegistration from "./Components/DoctorRegistration";
+import AdminLogin from "./Components/AdminLogin";
+import AdminDashboard from "./Components/AdminDashboard";
 
 const routes = createBrowserRouter([
     {
@@ -35,6 +37,14 @@ const routes = createBrowserRouter([
             {
                 path: "/doclog",
                 Component: DoctorLogin
+            },
+            {
+                path: "/admin/login",
+                Component: AdminLogin
+            },
+            {
+                path: "/admin/dashboard",
+                Component: AdminDashboard
             }
         ]
     }   

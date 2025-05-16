@@ -17,8 +17,6 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Middleware to verify admin (for approval endpoint)
-// This is a simple example; in production, use proper admin authentication
 const adminMiddleware = (req, res, next) => {
     const token = req.header('Authorization')?.replace('Bearer ', '');
     if (!token) {
@@ -26,7 +24,9 @@ const adminMiddleware = (req, res, next) => {
     }
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        // Add logic to check if the user is an admin (e.g., decoded.role === 'admin')
+        if (decoded.role !== 'admin') {
+            return res.status(403).json({ message: 'Forbidden: Admins only' });
+        }
         req.user = decoded;
         next();
     } catch (err) {
@@ -106,6 +106,24 @@ router.post('/approve/:id', adminMiddleware, async (req, res) => {
     }
 });
 
+// Reject doctor application (admin only)
+router.post('/reject/:id', adminMiddleware, async (req, res) => {
+    try {
+        const application = await DoctorApplication.findById(req.params.id);
+        if (!application) {
+            return res.status(404).json({ message: 'Application not found' });
+        }
+        if (application.status !== 'pending') {
+            return res.status(400).json({ message: 'Application already processed' });
+        }
+        application.status = 'rejected';
+        await application.save();
+        res.json({ message: 'Doctor application rejected successfully' });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
 // Doctor login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -127,6 +145,16 @@ router.post('/login', async (req, res) => {
             token,
             doctorId: doctor._id,
         });
+    } catch (err) {
+        res.status(500).json({ message: 'Server error' });
+    }
+});
+
+// Get pending applications (admin only)
+router.get('/applications', adminMiddleware, async (req, res) => {
+    try {
+        const applications = await DoctorApplication.find({ status: 'pending' });
+        res.json(applications);
     } catch (err) {
         res.status(500).json({ message: 'Server error' });
     }
