@@ -55,6 +55,11 @@ const DoctorLogin = () => {
         }
     };
 
+    const isLoggedIn =
+        localStorage.getItem('userId') ||
+        localStorage.getItem('doctorToken') ||
+        localStorage.getItem('adminToken');
+
     return (
         <div className="bg-gray-100 min-h-screen flex items-center justify-center font-sans">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
@@ -93,7 +98,7 @@ const DoctorLogin = () => {
                             {showPassword ? 'Hide' : 'Show'}
                         </button>
                     </div>
-                    <button type="submit" disabled={loading} className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
+                    <button type="submit" disabled={loading || isLoggedIn} className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}>
                         {loading ? (
                             <span className="flex items-center justify-center">
                                 <svg className="animate-spin h-5 w-5 mr-2 text-white" viewBox="0 0 24 24">
@@ -103,6 +108,7 @@ const DoctorLogin = () => {
                                 Logging In...
                             </span>) : ('Log In')}
                     </button>
+                    {isLoggedIn && <div className="text-center text-red-500 mt-4">You are already logged in.</div>}
                 </form>
                 <p className="mt-4 text-center text-gray-600">
                     Not registered?{' '}

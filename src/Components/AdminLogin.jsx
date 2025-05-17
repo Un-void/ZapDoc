@@ -29,6 +29,11 @@ const AdminLogin = () => {
     }
   };
 
+  const isLoggedIn =
+    localStorage.getItem('userId') ||
+    localStorage.getItem('doctorToken') ||
+    localStorage.getItem('adminToken');
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md transform transition-all hover:scale-105 duration-300">
@@ -68,6 +73,7 @@ const AdminLogin = () => {
           </div>
           <button
             type="submit"
+            disabled={isLoggedIn}
             className="w-full py-3 px-4 rounded-lg font-semibold text-white bg-blue-600 hover:bg-blue-700 active:scale-95 transition-all duration-200"
           >
             Login as Admin
@@ -77,6 +83,7 @@ const AdminLogin = () => {
               {error}
             </div>
           )}
+          {isLoggedIn && <div className="text-green-500 text-sm text-center mt-4">You are already logged in.</div>}
         </form>
       </div>
     </div>

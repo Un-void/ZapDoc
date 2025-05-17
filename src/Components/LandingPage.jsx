@@ -1,8 +1,21 @@
 import React from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
 import SpecialtyGrid from './SpecialtyGrid';
 
 const LandingPage = () => {
+    const navigate = useNavigate();
+
+    // Check if any role is logged in
+    const isLoggedIn = localStorage.getItem('userId') || localStorage.getItem('doctorToken') || localStorage.getItem('adminToken');
+
+    const handleLogout = () => {
+        localStorage.removeItem('userId');
+        localStorage.removeItem('doctorToken');
+        localStorage.removeItem('doctorId');
+        localStorage.removeItem('adminToken');
+        navigate('/'); // Redirect to home or login
+    };
+
     return (
         <div className="bg-gray-100 min-h-screen font-sans">
             <header className="bg-white shadow-md py-6 px-8 md:px-16 lg:px-24 flex justify-between items-center">
@@ -12,12 +25,23 @@ const LandingPage = () => {
                 <nav>
                     <ul className="flex items-center space-x-4 md:space-x-8">
                         <li><Link to="/login" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Log In</Link></li>
-                        <li><Link to="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Sign Up</Link></li>
+                        {/* <li><Link to="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Sign Up</Link></li> */}
+                        {!isLoggedIn && (<li><Link to="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Sign Up</Link></li>)}
                         <li><Link to="/contact" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Contact us</Link></li>
                         <li><Link to="/doclog" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Doc_LogIn</Link></li>
                         <li><Link to="/docreg" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Doc_Register</Link></li>
                         <li><Link to="/admin/login" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Admin_log</Link></li>
                         <li><Link to="/admin/dashboard" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Admin_dash</Link></li>
+                        {isLoggedIn && (
+                            <li>
+                                <button
+                                    onClick={handleLogout}
+                                    className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out"
+                                >
+                                    Logout
+                                </button>
+                            </li>
+                        )}
                     </ul>
                 </nav>
             </header>

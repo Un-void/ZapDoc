@@ -40,6 +40,11 @@ const LogIn = () => {
         }
     };
 
+    const isLoggedIn =
+        localStorage.getItem('userId') ||
+        localStorage.getItem('doctorToken') ||
+        localStorage.getItem('adminToken');
+
     return (
         <div className="bg-gray-100 min-h-screen flex items-center justify-center font-sans">
             <div className="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
@@ -78,13 +83,14 @@ const LogIn = () => {
                     </div>
                     <button
                         type="submit"
-                        disabled={loading}
+                        disabled={loading || isLoggedIn}
                         className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-full shadow-lg transition duration-300 ease-in-out ${
                             loading ? 'opacity-50 cursor-not-allowed' : ''
                         }`}
                     >
                         {loading ? 'Logging In...' : 'Log In'}
                     </button>
+                    {isLoggedIn && <div className="text-green-600 text-center mt-4">You are already logged in.</div>}
                 </form>
                 <p className="mt-4 text-center text-gray-600">
                     Don’t have an account?{' '}
@@ -97,4 +103,4 @@ const LogIn = () => {
     );
 };
 
-export default LogIn
+export default LogIn;
