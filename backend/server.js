@@ -24,7 +24,7 @@ app.use(express.urlencoded({ extended: true })); // Added to handle multipart fo
 app.use('/api/users', userRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/appointments', appointmentRoutes);
-app.use('/api/doctors', doctorRoutes); // Mounted doctor routes
+app.use('/api/doctors', doctorRoutes); 
 
 // Basic route to test the server
 app.get('/', (req, res) => {

@@ -38,7 +38,7 @@ const doctorSchema = new mongoose.Schema({
     },
   ],
   certificate: {
-    type: String, // URL or path to stored file
+    type: String, 
     default: null,
   },
   createdAt: {

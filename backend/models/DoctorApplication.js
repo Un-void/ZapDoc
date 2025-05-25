@@ -32,10 +32,10 @@ const doctorApplicationSchema = new mongoose.Schema({
         year: Number,
     }],
     certificate: {
-        type: String, // URL or path to stored file
+        type: String, 
         default: null,
     },
-    password: { // Added password field
+    password: { 
         type: String,
         required: true,
     },
@@ -49,13 +49,5 @@ const doctorApplicationSchema = new mongoose.Schema({
         default: Date.now,
     },
 });
-
-// Hash password before saving
-// doctorApplicationSchema.pre('save', async function (next) {
-//     if (!this.isModified('password')) return next();
-//     const salt = await bcrypt.genSalt(10);
-//     this.password = await bcrypt.hash(this.password, salt);
-//     next();
-// });
 
 export default mongoose.model('DoctorApplication', doctorApplicationSchema);

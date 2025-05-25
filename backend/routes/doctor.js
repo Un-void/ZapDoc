@@ -6,7 +6,6 @@ import DoctorApplication from "../models/DoctorApplication.js";
 import bcrypt from "bcryptjs";
 const router = express.Router();
 
-// Configure multer for file uploads
 const storage = multer.diskStorage({
   destination: (req, res, cb) => {
     cb(null, "uploads/");
@@ -97,7 +96,7 @@ router.post("/approve/:id", adminMiddleware, async (req, res) => {
     const doctor = new Doctor({
       name: application.name,
       email: application.email,
-      password: application.password, // Use the hashed password from the application
+      password: application.password, 
       clinicName: application.clinicName,
       clinicAddress: application.clinicAddress,
       phone: application.phone,
@@ -144,16 +143,12 @@ router.post("/login", async (req, res) => {
     const doctor = await Doctor.findOne({ email });
     console.log("Doctor found:", doctor);
     if (!doctor) {
-      console.log("Doctor not found");
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
-    console.log("Stored hash password:", doctor.password);
     const isMatch = await bcrypt.compare(password, doctor.password);
-    console.log("Password Match:", isMatch);
 
     if (!isMatch) {
-      console.log("Password did not match");
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
@@ -161,7 +156,6 @@ router.post("/login", async (req, res) => {
       expiresIn: "1d",
     });
 
-    console.log("Token generated");
 
     res.json({
       message: "Login successful",
@@ -181,6 +175,16 @@ router.get("/applications", adminMiddleware, async (req, res) => {
     res.json(applications);
   } catch (err) {
     res.status(500).json({ message: "Server error" });
+  }
+});
+
+// Get all approved doctors (for search)
+router.get('/all', async (req, res) => {
+  try {
+    const doctors = await Doctor.find({});
+    res.json(doctors);
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
