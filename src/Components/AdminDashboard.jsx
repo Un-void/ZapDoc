@@ -54,7 +54,8 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="max-w-6xl mx-auto bg-white shadow-lg rounded-2xl p-6">
         <h2 className="text-2xl font-bold mb-6 text-gray-800">Doctor Applications</h2>
-        <Link to="/">Home</Link>
+        
+        <Link to="/" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Back</Link>
         {applications.length === 0 ? (
           <div className="text-center text-gray-500">No pending applications.</div>
         ) : (

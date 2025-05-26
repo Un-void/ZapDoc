@@ -1,11 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router";
+import React, { useEffect, useState, useRef } from "react";
+import { Link, useParams } from "react-router";
 
 const DoctorSearch = () => {
+  const { specialtyName } = useParams(); // Capture the specialty from URL
   const [doctors, setDoctors] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const dropdownRef = useRef(null);
 
   useEffect(() => {
     // Fetch all doctors
@@ -16,11 +20,25 @@ const DoctorSearch = () => {
         const data = await res.json();
         if (res.ok) {
           setDoctors(data);
-          // Extract unique specialties
           const uniqueSpecialties = [
             ...new Set(data.map((doc) => doc.specialization)),
           ];
           setSpecialties(uniqueSpecialties);
+
+          if (specialtyName) {
+            // Set selected specialty based on URL param
+            const matchedSpecialty = uniqueSpecialties.find(
+              (spec) => spec.toLowerCase() === specialtyName.toLowerCase()
+            );
+            if (matchedSpecialty) {
+              setSelectedSpecialty(matchedSpecialty);
+              setSearchInput(matchedSpecialty);
+            } else {
+              // If no match, set an empty specialty to trigger "No doctors found"
+              setSelectedSpecialty("");
+              setSearchInput(specialtyName || "");
+            }
+          }
         }
       } catch {
         setDoctors([]);
@@ -28,12 +46,58 @@ const DoctorSearch = () => {
       setLoading(false);
     };
     fetchDoctors();
+  }, [specialtyName]);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Filter doctors by selected specialty
-  const filteredDoctors = selectedSpecialty
-    ? doctors.filter((doc) => doc.specialization === selectedSpecialty)
+  // Filter doctors based on the selected specialty
+  const filteredDoctors = specialtyName
+    ? doctors.filter(
+        (doc) =>
+          doc.specialization.toLowerCase() === specialtyName.toLowerCase()
+      )
+    : selectedSpecialty
+    ? doctors.filter(
+        (doc) =>
+          doc.specialization.toLowerCase() === selectedSpecialty.toLowerCase()
+      )
     : doctors;
+
+  // Filter specialties based on search input
+  const filteredSpecialties = specialties.filter((spec) =>
+    spec.toLowerCase().includes(searchInput.toLowerCase())
+  );
+
+  // Handle input change
+  const handleInputChange = (e) => {
+    setSearchInput(e.target.value);
+    setIsDropdownOpen(true);
+    const matchedSpecialty = specialties.find(
+      (spec) => spec.toLowerCase() === e.target.value.toLowerCase()
+    );
+    setSelectedSpecialty(matchedSpecialty || "");
+  };
+
+  // Handle specialty selection
+  const handleSpecialtySelect = (spec) => {
+    setSelectedSpecialty(spec);
+    setSearchInput(spec);
+    setIsDropdownOpen(false);
+  };
+
+  // Toggle dropdown visibility
+  const toggleDropdown = () => {
+    setIsDropdownOpen((prev) => !prev);
+  };
 
   return (
     <div className="bg-gray-100 min-h-screen font-sans">
@@ -44,8 +108,11 @@ const DoctorSearch = () => {
         <nav>
           <ul className="flex items-center space-x-4 md:space-x-8">
             <li>
-              <Link to="/" className="text-gray-700 hover:text-indigo-600">
-                Home
+              <Link
+                to="/"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out"
+              >
+                Back
               </Link>
             </li>
           </ul>
@@ -56,28 +123,83 @@ const DoctorSearch = () => {
           <h1 className="text-3xl md:text-4xl font-bold text-indigo-800 mb-6">
             Search Doctors Based on Specialty
           </h1>
-          <div className="mb-8 flex flex-col md:flex-row items-center justify-center gap-4">
+          <div
+            className="mb-8 flex flex-col md:flex-row items-center justify-center gap-4 relative"
+            ref={dropdownRef}
+          >
             <label htmlFor="specialty" className="text-lg font-semibold">
               Filter by Specialty:
             </label>
-            <select
-              id="specialty"
-              value={selectedSpecialty}
-              onChange={(e) => setSelectedSpecialty(e.target.value)}
-              className="p-2 rounded border focus:outline-none focus:ring-2 focus:ring-indigo-600"
-            >
-              <option value="">All Specialties</option>
-              {specialties.map((spec) => (
-                <option key={spec} value={spec}>
-                  {spec}
-                </option>
-              ))}
-            </select>
+            <div className="relative w-64">
+              <input
+                id="specialty"
+                type="text"
+                value={searchInput}
+                onChange={handleInputChange}
+                onFocus={() => setIsDropdownOpen(true)}
+                placeholder="Type or select a specialty"
+                className="w-full p-2 rounded border focus:outline-none focus:ring-2 focus:ring-indigo-600"
+              />
+              <button
+                type="button"
+                onClick={toggleDropdown}
+                className="absolute right-2 top-1/2 transform -translate-y-1/2 text-gray-600"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              {isDropdownOpen && (
+                <ul className="absolute z-10 w-full bg-white border rounded mt-1 max-h-60 overflow-y-auto shadow-lg">
+                  <li
+                    className="px-4 py-2 cursor-pointer hover:bg-indigo-100"
+                    onClick={() => {
+                      handleSpecialtySelect("");
+                      setSearchInput("");
+                    }}
+                  >
+                    All Specialties
+                  </li>
+                  {filteredSpecialties.length > 0 ? (
+                    filteredSpecialties.map((spec) => (
+                      <li
+                        key={spec}
+                        className="px-4 py-2 cursor-pointer hover:bg-indigo-100"
+                        onClick={() => handleSpecialtySelect(spec)}
+                      >
+                        {spec}
+                      </li>
+                    ))
+                  ) : (
+                    <li className="px-4 py-2 text-gray-500">
+                      No specialties found
+                    </li>
+                  )}
+                </ul>
+              )}
+            </div>
           </div>
           {loading ? (
-            <div>Loading doctors...</div>
+            <div className="flex justify-center">
+              <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-600"></div>
+            </div>
           ) : filteredDoctors.length === 0 ? (
-            <div className="text-gray-600">No doctors found.</div>
+            <div className="text-gray-600 text-center">
+              {specialtyName
+                ? `No doctors found for ${specialtyName}.`
+                : "No doctors found."}
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {filteredDoctors.map((doc) => (
@@ -106,10 +228,7 @@ const DoctorSearch = () => {
                   <div className="text-gray-700 mb-1">
                     <span className="font-semibold">Qualifications:</span>{" "}
                     {doc.qualifications
-                      .map(
-                        (q) =>
-                          `${q.degree} (${q.institution}, ${q.year})`
-                      )
+                      .map((q) => `${q.degree} (${q.institution}, ${q.year})`)
                       .join(", ")}
                   </div>
                 </div>

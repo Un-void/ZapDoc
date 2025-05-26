@@ -46,8 +46,12 @@ const routes = createBrowserRouter([
                 path: "/admin/dashboard",
                 Component: AdminDashboard
             },
+            // {
+            //     path: "/search",
+            //     Component: DoctorSearch
+            // },
             {
-                path: "/search",
+                path: "/search/:specialtyName?",
                 Component: DoctorSearch
             }
         ]
