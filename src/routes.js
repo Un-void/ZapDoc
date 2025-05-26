@@ -9,6 +9,7 @@ import DoctorRegistration from "./Components/DoctorRegistration";
 import AdminLogin from "./Components/AdminLogin";
 import AdminDashboard from "./Components/AdminDashboard";
 import DoctorSearch from "./Components/DoctorSearch";
+import DocCard from "./Components/DocCard";
 const routes = createBrowserRouter([
     {
         path: "/",
@@ -46,13 +47,13 @@ const routes = createBrowserRouter([
                 path: "/admin/dashboard",
                 Component: AdminDashboard
             },
-            // {
-            //     path: "/search",
-            //     Component: DoctorSearch
-            // },
             {
                 path: "/search/:specialtyName?",
                 Component: DoctorSearch
+            },
+            {
+                path: "/doctor/:name?",
+                Component: DocCard
             }
         ]
     }

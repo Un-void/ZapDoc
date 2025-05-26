@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link, useParams } from "react-router";
 
 const DoctorSearch = () => {
-  const { specialtyName } = useParams(); // Capture the specialty from URL
+  const { specialtyName } = useParams();
   const [doctors, setDoctors] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [selectedSpecialty, setSelectedSpecialty] = useState("");
@@ -12,7 +12,6 @@ const DoctorSearch = () => {
   const dropdownRef = useRef(null);
 
   useEffect(() => {
-    // Fetch all doctors
     const fetchDoctors = async () => {
       setLoading(true);
       try {
@@ -26,7 +25,6 @@ const DoctorSearch = () => {
           setSpecialties(uniqueSpecialties);
 
           if (specialtyName) {
-            // Set selected specialty based on URL param
             const matchedSpecialty = uniqueSpecialties.find(
               (spec) => spec.toLowerCase() === specialtyName.toLowerCase()
             );
@@ -34,7 +32,6 @@ const DoctorSearch = () => {
               setSelectedSpecialty(matchedSpecialty);
               setSearchInput(matchedSpecialty);
             } else {
-              // If no match, set an empty specialty to trigger "No doctors found"
               setSelectedSpecialty("");
               setSearchInput(specialtyName || "");
             }
@@ -48,7 +45,6 @@ const DoctorSearch = () => {
     fetchDoctors();
   }, [specialtyName]);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
@@ -59,7 +55,6 @@ const DoctorSearch = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Filter doctors based on the selected specialty
   const filteredDoctors = specialtyName
     ? doctors.filter(
         (doc) =>
@@ -72,12 +67,10 @@ const DoctorSearch = () => {
       )
     : doctors;
 
-  // Filter specialties based on search input
   const filteredSpecialties = specialties.filter((spec) =>
     spec.toLowerCase().includes(searchInput.toLowerCase())
   );
 
-  // Handle input change
   const handleInputChange = (e) => {
     setSearchInput(e.target.value);
     setIsDropdownOpen(true);
@@ -87,14 +80,12 @@ const DoctorSearch = () => {
     setSelectedSpecialty(matchedSpecialty || "");
   };
 
-  // Handle specialty selection
   const handleSpecialtySelect = (spec) => {
     setSelectedSpecialty(spec);
     setSearchInput(spec);
     setIsDropdownOpen(false);
   };
 
-  // Toggle dropdown visibility
   const toggleDropdown = () => {
     setIsDropdownOpen((prev) => !prev);
   };
@@ -205,7 +196,7 @@ const DoctorSearch = () => {
               {filteredDoctors.map((doc) => (
                 <div
                   key={doc._id}
-                  className="bg-white rounded-lg shadow-md p-6 flex flex-col items-start"
+                  className="bg-white rounded-lg shadow-md p-6 flex flex-col relative min-h-[200px]"
                 >
                   <h2 className="text-xl font-bold text-indigo-700 mb-2">
                     Dr. {doc.name}
@@ -215,22 +206,17 @@ const DoctorSearch = () => {
                     {doc.specialization}
                   </div>
                   <div className="text-gray-700 mb-1">
-                    <span className="font-semibold">Clinic:</span>{" "}
-                    {doc.clinicName}
-                  </div>
-                  <div className="text-gray-700 mb-1">
-                    <span className="font-semibold">Address:</span>{" "}
-                    {doc.clinicAddress}
-                  </div>
-                  <div className="text-gray-700 mb-1">
-                    <span className="font-semibold">Phone:</span> {doc.phone}
-                  </div>
-                  <div className="text-gray-700 mb-1">
                     <span className="font-semibold">Qualifications:</span>{" "}
                     {doc.qualifications
                       .map((q) => `${q.degree} (${q.institution}, ${q.year})`)
                       .join(", ")}
                   </div>
+                  <Link
+                    to={`/doctor/${encodeURIComponent(doc.name)}`} // Navigate using name
+                    className="absolute bottom-4 right-4 text-indigo-600 hover:text-indigo-800 font-semibold text-sm transition duration-300"
+                  >
+                    View More...
+                  </Link>
                 </div>
               ))}
             </div>

@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import SpecialtyGrid from './SpecialtyGrid';
 
 const LandingPage = () => {
     const navigate = useNavigate();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isDoctorSectionOpen, setIsDoctorSectionOpen] = useState(false);
+    const [isAdminSectionOpen, setIsAdminSectionOpen] = useState(false);
 
-    // Check if any role is logged in
     const isLoggedIn = localStorage.getItem('userId') || localStorage.getItem('doctorToken') || localStorage.getItem('adminToken');
 
     const handleLogout = () => {
@@ -13,7 +15,19 @@ const LandingPage = () => {
         localStorage.removeItem('doctorToken');
         localStorage.removeItem('doctorId');
         localStorage.removeItem('adminToken');
-        navigate('/'); // Redirect to home or login
+        navigate('/');
+    };
+
+    const toggleMenu = () => {
+        setIsMenuOpen((prev) => !prev);
+    };
+
+    const toggleDoctorSection = () => {
+        setIsDoctorSectionOpen((prev) => !prev);
+    };
+
+    const toggleAdminSection = () => {
+        setIsAdminSectionOpen((prev) => !prev);
     };
 
     return (
@@ -22,20 +36,168 @@ const LandingPage = () => {
                 <div className="text-xl md:text-3xl font-semibold text-indigo-600 tracking-tight">
                     Zap<span className="text-gray-800">Doc</span>
                 </div>
-                <nav>
-                    <ul className="flex items-center space-x-4 md:space-x-8">
-                        <li><Link to="/login" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Log In</Link></li>
-                        {!isLoggedIn && (<li><Link to="/signup" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out">Sign Up</Link></li>)}
-                        <li><Link to="/contact" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Contact us</Link></li>
-                        <li><Link to="/doclog" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Doc_LogIn</Link></li>
-                        <li><Link to="/docreg" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Doc_Register</Link></li>
-                        <li><Link to="/admin/login" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Admin_log</Link></li>
-                        <li><Link to="/admin/dashboard" className="text-gray-700 hover:text-indigo-600 transition duration-300 ease-in-out">Admin_dash</Link></li>
+                <div className="flex items-center">
+                    <button
+                        onClick={toggleMenu}
+                        className="text-gray-700 hover:text-indigo-600 focus:outline-none"
+                        aria-label="Toggle navigation menu"
+                    >
+                        <svg
+                            className="w-8 h-8"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d={isMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"}
+                            />
+                        </svg>
+                    </button>
+                </div>
+                <nav
+                    className={`absolute top-16 right-0 w-full bg-gradient-to-b from-white to-gray-50 shadow-lg border-t border-gray-200 transition-all duration-300 ease-in-out z-50 ${isMenuOpen ? 'opacity-100 max-h-screen' : 'opacity-0 max-h-0 overflow-hidden'
+                        } md:w-64 md:top-20 md:right-8`}
+                >
+                    <ul className="flex flex-col items-center space-y-5 py-8 md:items-start md:px-8">
+                        <li className="relative group w-full">
+                            <Link
+                                to="/login"
+                                className="text-gray-800 hover:text-indigo-700 font-medium transition duration-300 ease-in-out transform hover:scale-105"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Log In
+                            </Link>
+                            <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                        </li>
+                        <li className="relative group w-full">
+                            <Link
+                                to="/contact"
+                                className="text-gray-800 hover:text-indigo-700 font-medium transition duration-300 ease-in-out transform hover:scale-105"
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Contact us
+                            </Link>
+                            <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                        </li>
+                        <li className="w-full">
+                            <button
+                                onClick={toggleDoctorSection}
+                                className="flex items-center justify-between w-full text-gray-800 font-semibold py-2 px-3 rounded-md hover:bg-indigo-50 transition duration-300 ease-in-out"
+                            >
+                                <span>Doctor Section</span>
+                                <svg
+                                    className={`w-5 h-5 transform transition-transform duration-300 ${isDoctorSectionOpen ? 'rotate-90' : ''
+                                        }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M9 5l7 7-7 7"
+                                    />
+                                </svg>
+                            </button>
+                            <ul
+                                className={`flex flex-col space-y-3 mt-2 pl-4 transition-all duration-300 ease-in-out ${isDoctorSectionOpen ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0 overflow-hidden'
+                                    }`}
+                            >
+                                <li className="relative group">
+                                    <Link
+                                        to="/doclog"
+                                        className="text-gray-800 hover:text-indigo-700 font-medium transition duration-300 ease-in-out transform hover:scale-105"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        Doc_LogIn
+                                    </Link>
+                                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                                </li>
+                                <li className="relative group">
+                                    <Link
+                                        to="/docreg"
+                                        className="text-gray-800 hover:text-indigo-700 font-medium transition duration-300 ease-in-out transform hover:scale-105"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        Doc_Register
+                                    </Link>
+                                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                                </li>
+                            </ul>
+                        </li>
+                        <li className="w-full">
+                            <button
+                                onClick={toggleAdminSection}
+                                className="flex items-center justify-between w-full text-gray-800 font-semibold py-2 px-3 rounded-md hover:bg-indigo-50 transition duration-300 ease-in-out"
+                            >
+                                <span>Admin Section</span>
+                                <svg
+                                    className={`w-5 h-5 transform transition-transform duration-300 ${isAdminSectionOpen ? 'rotate-90' : ''
+                                        }`}
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        strokeWidth="2"
+                                        d="M9 5l7 7-7 7"
+                                    />
+                                </svg>
+                            </button>
+                            <ul
+                                className={`flex flex-col space-y-3 mt-2 pl-4 transition-all duration-300 ease-in-out ${isAdminSectionOpen ? 'opacity-100 max-h-40' : 'opacity-0 max-h-0 overflow-hidden'
+                                    }`}
+                            >
+                                <li className="relative group">
+                                    <Link
+                                        to="/admin/login"
+                                        className="text-gray-800 hover:text-indigo-700 font-medium transition duration-300 ease-in-out transform hover:scale-105"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        Admin_log
+                                    </Link>
+                                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                                </li>
+                                <li className="relative group">
+                                    <Link
+                                        to="/admin/dashboard"
+                                        className="text-gray-800 hover:text-indigo-700 font-medium transition duration-300 ease-in-out transform hover:scale-105"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        Admin_dash
+                                    </Link>
+                                    <span className="absolute left-0 bottom-0 w-0 h-0.5 bg-indigo-600 transition-all duration-300 group-hover:w-full"></span>
+                                </li>
+                            </ul>
+                        </li>
+                        {!isLoggedIn && (
+                            <li className="w-full">
+                                <Link
+                                    to="/signup"
+                                    className="block text-center bg-gradient-to-r from-indigo-600 to-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-sm transition duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-md"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    Sign Up
+                                </Link>
+                            </li>
+                        )}
                         {isLoggedIn && (
-                            <li>
+                            <li className="w-full">
                                 <button
-                                    onClick={handleLogout}
-                                    className="bg-red-500 hover:bg-red-600 text-white font-semibold py-2 px-4 rounded-full shadow-md transition duration-300 ease-in-out"
+                                    onClick={() => {
+                                        handleLogout();
+                                        setIsMenuOpen(false);
+                                    }}
+                                    className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold py-3 px-6 rounded-full shadow-sm transition duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-md"
                                 >
                                     Logout
                                 </button>
@@ -75,7 +237,7 @@ const LandingPage = () => {
             <section className="py-16 px-8 md:px-16 lg:px-24 bg-gray-50">
                 <div className="mx-auto items-center">
                     <div>
-                        <h2 className="text-4xl font-semibol mb-4 text-indigo-600">
+                        <h2 className="text-4xl font-semibold mb-4 text-indigo-600">
                             Effortless Appointment Booking
                         </h2>
                         <p className="text-gray-600 leading-relaxed mb-6 text-2xl">
@@ -90,14 +252,32 @@ const LandingPage = () => {
                     </div>
                 </div>
             </section>
-            <section className="py-20 bg-indigo-100 px-8 md:px-16 lg:px-24">
+            <section className="py-24 bg-indigo-100 px-8 md:px-16 lg:px-24">
                 <div className="container mx-auto text-center">
                     <h2 className="text-3xl font-semibold text-indigo-800 mb-8">Ready to Find Your Doctor?</h2>
                     <Link to="/search" className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-4 px-10 rounded-full shadow-lg transition duration-300 ease-in-out">Book Your Appointment Today</Link>
                 </div>
             </section>
+            <section className="py-24 mt-10 px-8 md:px-16 lg:px-24 bg-indigo-50">
+                <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div className="flex-1 text-center">
+                        <h2 className="text-3xl md:text-4xl font-semibold text-indigo-600 mb-3 animate-fade-in">
+                            Are You a Doctor?
+                        </h2>
+                        <p className="text-lg md:text-xl text-gray-700 mb-6 leading-relaxed animate-fade-in-delayed">
+                            Reach more patients and grow your practice with ZapDoc.
+                        </p>
+                        <Link
+                            to="/docreg"
+                            className="inline-block bg-indigo-600 text-white font-semibold py-3 px-6 rounded-full shadow-sm transition duration-300 ease-in-out transform hover:-translate-y-0.5 hover:shadow-md hover:bg-indigo-700"
+                        >
+                            Join Now
+                        </Link>
+                    </div>
+                </div>
+            </section>
             <footer className="bg-gray-200 py-8 px-8 md:px-16 lg:px-24 text-center text-gray-600 text-sm">
-                <p>&copy; {new Date().getFullYear()} ZapDoc. All rights reserved.</p>
+                <p>© {new Date().getFullYear()} ZapDoc. All rights reserved.</p>
                 <ul className="flex justify-center space-x-4 mt-2">
                     <li><Link to="/privacy" className="hover:text-indigo-600 transition duration-300 ease-in-out">Privacy Policy</Link></li>
                     <li><Link to="/terms" className="hover:text-indigo-600 transition duration-300 ease-in-out">Terms of Service</Link></li>

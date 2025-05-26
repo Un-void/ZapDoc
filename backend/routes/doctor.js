@@ -66,7 +66,6 @@ router.post("/register", upload.single("certificate"), async (req, res) => {
       certificate,
       password: hashedPassword,
     });
-    console.log(application.password);
 
     await application.save();
     res.status(201).json({ message: "Application submitted successfully" });
@@ -86,17 +85,15 @@ router.post("/approve/:id", adminMiddleware, async (req, res) => {
       return res.status(400).json({ message: "Application already processed" });
     }
 
-    // Check if a Doctor entry already exists for this email
     const existingDoctor = await Doctor.findOne({ email: application.email });
     if (existingDoctor) {
       return res.status(400).json({ message: "Doctor already registered" });
     }
 
-    // Create a new Doctor entry
     const doctor = new Doctor({
       name: application.name,
       email: application.email,
-      password: application.password, 
+      password: application.password,
       clinicName: application.clinicName,
       clinicAddress: application.clinicAddress,
       phone: application.phone,
@@ -107,7 +104,6 @@ router.post("/approve/:id", adminMiddleware, async (req, res) => {
 
     await doctor.save();
 
-    // Update application status
     application.status = "approved";
     await application.save();
 
@@ -141,13 +137,11 @@ router.post("/login", async (req, res) => {
     const { email, password } = req.body;
 
     const doctor = await Doctor.findOne({ email });
-    console.log("Doctor found:", doctor);
     if (!doctor) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
     const isMatch = await bcrypt.compare(password, doctor.password);
-
     if (!isMatch) {
       return res.status(401).json({ error: "Invalid credentials" });
     }
@@ -156,14 +150,12 @@ router.post("/login", async (req, res) => {
       expiresIn: "1d",
     });
 
-
     res.json({
       message: "Login successful",
       token,
       doctorId: doctor._id,
     });
   } catch (err) {
-    console.error("Server error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
@@ -185,6 +177,33 @@ router.get('/all', async (req, res) => {
     res.json(doctors);
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
+  }
+});
+
+// Get doctor by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const doctor = await Doctor.findById(req.params.id);
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+    res.json(doctor);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+// New endpoint: Get doctor by name
+router.get("/name/:name", async (req, res) => {
+  try {
+    const name = decodeURIComponent(req.params.name);
+    const doctor = await Doctor.findOne({ name: { $regex: `^${name}$`, $options: 'i' } });
+    if (!doctor) {
+      return res.status(404).json({ message: "Doctor not found" });
+    }
+    res.json(doctor);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
   }
 });
 
