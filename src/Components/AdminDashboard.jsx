@@ -10,9 +10,7 @@ const AdminDashboard = () => {
     setError('');
     try {
       const res = await fetch('http://localhost:5000/api/doctors/applications', {
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('adminToken'),
-        },
+        headers: { Authorization: 'Bearer ' + localStorage.getItem('adminToken'),},
       });
       const data = await res.json();
       if (res.ok) setApplications(data);
@@ -30,12 +28,7 @@ const AdminDashboard = () => {
   const handleAction = async (id, action) => {
     setError('');
     try {
-      const res = await fetch(`http://localhost:5000/api/doctors/${action}/${id}`, {
-        method: 'POST',
-        headers: {
-          Authorization: 'Bearer ' + localStorage.getItem('adminToken'),
-        },
-      });
+      const res = await fetch(`http://localhost:5000/api/doctors/${action}/${id}`, { method: 'POST',headers: {Authorization: 'Bearer ' + localStorage.getItem('adminToken'),},});
       const data = await res.json();
       if (res.ok) {
         setApplications(applications.filter(app => app._id !== id));
@@ -77,28 +70,11 @@ const AdminDashboard = () => {
                     <td className="px-4 py-2">{app.email}</td>
                     <td className="px-4 py-2">{app.specialty}</td>
                     <td className="px-4 py-2">
-                      <a
-                        href={`http://localhost:5000/${app.certificate}`}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-blue-600 underline"
-                      >
-                        View
-                      </a>
+                      <a href={`http://localhost:5000/${app.certificate}`} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline" >View</a>
                     </td>
                     <td className="px-4 py-2 space-x-2">
-                      <button
-                        className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
-                        onClick={() => handleAction(app._id, 'approve')}
-                      >
-                        Approve
-                      </button>
-                      <button
-                        className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
-                        onClick={() => handleAction(app._id, 'reject')}
-                      >
-                        Reject
-                      </button>
+                      <button className="px-3 py-1 rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50" onClick={() => handleAction(app._id, 'approve')}>Approve</button>
+                      <button className="px-3 py-1 rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"onClick={() => handleAction(app._id, 'reject')}>Reject</button>
                     </td>
                   </tr>
                 ))}

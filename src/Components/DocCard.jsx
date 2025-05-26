@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router";
 import { Star, MapPin, Play } from "lucide-react";
-import Logo from "../assets/Doc_LOGO.png";
+import Logo from "../assets/Doc_Logo.png";
 
 const DocCard = () => {
     const { name } = useParams(); // Expect doctor name in the URL
