@@ -113,7 +113,6 @@ const DocCard = () => {
         },
         body: JSON.stringify({
           doctorId: doctor._id,
-          userId,
           date: selectedDate,
           slot: selectedSlot,
         }),
