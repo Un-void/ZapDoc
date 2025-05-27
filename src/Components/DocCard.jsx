@@ -24,7 +24,9 @@ const DocCard = () => {
       setError(null);
       try {
         const res = await fetch(
-          `http://localhost:5000/api/doctors/name/${encodeURIComponent(decodedName)}`
+          `http://localhost:5000/api/doctors/name/${encodeURIComponent(
+            decodedName
+          )}`
         );
         const data = await res.json();
         if (res.ok) {
@@ -74,7 +76,9 @@ const DocCard = () => {
   };
 
   const handleBack = () => {
-    const specialty = window.location.pathname.split("/search/")[1]?.split("/")[0];
+    const specialty = window.location.pathname
+      .split("/search/")[1]
+      ?.split("/")[0];
     navigate(specialty ? `/search/${specialty}` : "/search");
   };
 
@@ -93,23 +97,32 @@ const DocCard = () => {
 
   const confirmBooking = async () => {
     const userId = localStorage.getItem("userId");
-    if (!userId) {
+    const token = localStorage.getItem("token"); // Ensure token is stored at login
+
+    if (!userId || !token) {
       alert("Please log in to book an appointment.");
       navigate("/login");
       return;
     }
+
     try {
       const res = await fetch("http://localhost:5000/api/appointments/book", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`, // ✅ Add this line
+        },
         body: JSON.stringify({
           doctorId: doctor._id,
           userId,
           date: selectedDate,
           slot: selectedSlot,
         }),
+        credentials: "include", // optional, if your backend uses cookies too
       });
+
       const data = await res.json();
+
       if (res.ok) {
         setBookingSuccess("Appointment booked successfully!");
         setTimeout(() => {
@@ -164,7 +177,9 @@ const DocCard = () => {
                   <h1 className="text-3xl font-bold text-indigo-700 mb-1">
                     Dr. {doctor.name}
                   </h1>
-                  <h1 className="text-xl font-bold text-indigo-500 my-3">{doctor.clinicName}</h1>
+                  <h1 className="text-xl font-bold text-indigo-500 my-3">
+                    {doctor.clinicName}
+                  </h1>
                   <div className="w-full text-right ml-auto text-md my-3">
                     Contact - {doctor.email}
                   </div>
@@ -173,7 +188,9 @@ const DocCard = () => {
                   </p>
                   <div className="flex items-center mb-2">
                     <MapPin className="w-5 h-5 text-gray-600 mr-1" />
-                    <span className="text-gray-700">{doctor.clinicAddress}</span>
+                    <span className="text-gray-700">
+                      {doctor.clinicAddress}
+                    </span>
                   </div>
                   <a
                     href="#"
@@ -238,7 +255,8 @@ const DocCard = () => {
             </h3>
             <p className="mb-4">
               You are about to book an appointment with Dr. {doctor?.name} on{" "}
-              <strong>{selectedDate}</strong> at <strong>{selectedSlot}</strong>.
+              <strong>{selectedDate}</strong> at <strong>{selectedSlot}</strong>
+              .
             </p>
             {bookingSuccess && (
               <p className="text-green-600 mb-4">{bookingSuccess}</p>
