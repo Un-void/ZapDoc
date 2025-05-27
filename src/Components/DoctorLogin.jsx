@@ -45,7 +45,7 @@ const DoctorLogin = () => {
         setSuccess(data.message);
         localStorage.setItem("doctorToken", data.token);
         localStorage.setItem("doctorId", data.doctorId);
-        setTimeout(() => navigate("/doctor-dashboard"), 1000);
+        setTimeout(() => navigate("/"), 1000);
       } else {
         setError(data.message);
       }

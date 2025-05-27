@@ -18,7 +18,7 @@ const DoctorRegistration = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
-    const [showPassword, setShowPassword] = useState(false); // Added for password visibility toggle
+    const [showPassword, setShowPassword] = useState(false);
     const navigate = useNavigate();
 
     const validateForm = () => {
@@ -98,7 +98,7 @@ const DoctorRegistration = () => {
                 formDataToSend.append(key, JSON.stringify(formData[key]));
             } else if (key === 'certificate' && formData[key]) {
                 formDataToSend.append(key, formData[key]);
-            } else if (key !== 'confirmPassword') { // Exclude confirmPassword from submission
+            } else if (key !== 'confirmPassword') { 
                 formDataToSend.append(key, formData[key]);
             }
         });

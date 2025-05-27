@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import SpecialtyGrid from './SpecialtyGrid';
+import Appointments from './Appointments';
 
 const LandingPage = () => {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isDoctorSectionOpen, setIsDoctorSectionOpen] = useState(false);
     const [isAdminSectionOpen, setIsAdminSectionOpen] = useState(false);
+    const [showAppointments, setShowAppointments] = useState(false);
 
     const isLoggedIn = localStorage.getItem('userId') || localStorage.getItem('doctorToken') || localStorage.getItem('adminToken');
+    const userId = localStorage.getItem('userId') || localStorage.getItem('doctorId');
+    const role = localStorage.getItem('doctorToken') ? 'doctor' : 'user';
 
     const handleLogout = () => {
         localStorage.removeItem('userId');
@@ -206,6 +210,19 @@ const LandingPage = () => {
                     </ul>
                 </nav>
             </header>
+            {isLoggedIn && (
+                <div className="container mx-auto px-8 md:px-16 lg:px-24 py-4">
+                    <button
+                        onClick={() => setShowAppointments(!showAppointments)}
+                        className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-full shadow-md transition duration-300 ease-in-out"
+                    >
+                        {showAppointments ? "Hide Appointments" : "View Appointments"}
+                    </button>
+                </div>
+            )}
+            {isLoggedIn && showAppointments && userId && (
+                <Appointments userId={userId} role={role} />
+            )}
             <section className="bg-indigo-50 py-20 md:py-32 px-8 md:px-16 lg:px-24">
                 <div className="container mx-auto text-center">
                     <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-indigo-800 mb-6">

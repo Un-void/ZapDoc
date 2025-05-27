@@ -33,7 +33,6 @@ const adminMiddleware = (req, res, next) => {
   }
 };
 
-// Doctor registration application
 router.post("/register", upload.single("certificate"), async (req, res) => {
   const {
     name,
@@ -74,7 +73,6 @@ router.post("/register", upload.single("certificate"), async (req, res) => {
   }
 });
 
-// Approve doctor application (admin only)
 router.post("/approve/:id", adminMiddleware, async (req, res) => {
   try {
     const application = await DoctorApplication.findById(req.params.id);
@@ -113,7 +111,6 @@ router.post("/approve/:id", adminMiddleware, async (req, res) => {
   }
 });
 
-// Reject doctor application (admin only)
 router.post("/reject/:id", adminMiddleware, async (req, res) => {
   try {
     const application = await DoctorApplication.findById(req.params.id);
@@ -131,7 +128,6 @@ router.post("/reject/:id", adminMiddleware, async (req, res) => {
   }
 });
 
-// Doctor login
 router.post("/login", async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -146,21 +142,18 @@ router.post("/login", async (req, res) => {
       return res.status(401).json({ error: "Invalid credentials" });
     }
 
-    const token = jwt.sign({ id: doctor._id }, process.env.JWT_SECRET, {
-      expiresIn: "1d",
-    });
+    const token = jwt.sign(
+      { id: doctor._id, email: doctor.email, role: "doctor" },
+      process.env.JWT_SECRET,
+      { expiresIn: "10h" }
+    );
 
-    res.json({
-      message: "Login successful",
-      token,
-      doctorId: doctor._id,
-    });
+    res.json({ token, doctorId: doctor._id, message: "Login successful" });
   } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// Get pending applications (admin only)
 router.get("/applications", adminMiddleware, async (req, res) => {
   try {
     const applications = await DoctorApplication.find({ status: "pending" });
@@ -170,7 +163,6 @@ router.get("/applications", adminMiddleware, async (req, res) => {
   }
 });
 
-// Get all approved doctors (for search)
 router.get('/all', async (req, res) => {
   try {
     const doctors = await Doctor.find({});
@@ -180,7 +172,6 @@ router.get('/all', async (req, res) => {
   }
 });
 
-// Get doctor by ID
 router.get("/:id", async (req, res) => {
   try {
     const doctor = await Doctor.findById(req.params.id);
@@ -193,7 +184,6 @@ router.get("/:id", async (req, res) => {
   }
 });
 
-// New endpoint: Get doctor by name
 router.get("/name/:name", async (req, res) => {
   try {
     const name = decodeURIComponent(req.params.name);

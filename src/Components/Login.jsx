@@ -9,12 +9,26 @@ const LogIn = () => {
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
+  const validateForm = () => {
+    if (!formData.email.match(/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/)) {
+      setError("Please enter a valid email");
+      return false;
+    }
+    if (formData.password.length < 6) {
+      setError("Password must be at least 6 characters");
+      return false;
+    }
+    return true;
+  };
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
     setLoading(true);
     setError("");
     setSuccess("");
@@ -26,16 +40,17 @@ const LogIn = () => {
         body: JSON.stringify(formData),
       });
       const data = await response.json();
+      console.log("Backend response:", data);
       if (response.ok) {
-        setSuccess(data.message);
+        setSuccess(data.message || "Login successful");
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
         setTimeout(() => navigate("/"), 1000);
       } else {
-        setError(data.message);
+        setError(data.message || "Invalid email or password");
       }
     } catch (err) {
-      setError("Failed to connect to the server");
+      setError("Failed to connect to the server. Please try again later.");
     } finally {
       setLoading(false);
     }
@@ -106,7 +121,31 @@ const LogIn = () => {
               loading ? "opacity-50 cursor-not-allowed" : ""
             }`}
           >
-            {loading ? "Logging In..." : "Log In"}
+            {loading ? (
+              <span className="flex items-center justify-center">
+                <svg
+                  className="animate-spin h-5 w-5 mr-2 text-white"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8v8H4z"
+                  />
+                </svg>
+                Logging In...
+              </span>
+            ) : (
+              "Log In"
+            )}
           </button>
           {isLoggedIn && (
             <div className="text-green-600 text-center mt-4">

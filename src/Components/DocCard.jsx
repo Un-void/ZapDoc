@@ -63,7 +63,6 @@ const DocCard = () => {
         setSlots([]);
       }
     } catch (error) {
-      console.error(error);
       setSlots([]);
     }
     setLoadingSlots(false);
@@ -97,7 +96,7 @@ const DocCard = () => {
 
   const confirmBooking = async () => {
     const userId = localStorage.getItem("userId");
-    const token = localStorage.getItem("token"); // Ensure token is stored at login
+    const token = localStorage.getItem("token");
 
     if (!userId || !token) {
       alert("Please log in to book an appointment.");
@@ -110,7 +109,7 @@ const DocCard = () => {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`, // ✅ Add this line
+          Authorization: `Bearer ${token}`, 
         },
         body: JSON.stringify({
           doctorId: doctor._id,
@@ -118,7 +117,7 @@ const DocCard = () => {
           date: selectedDate,
           slot: selectedSlot,
         }),
-        credentials: "include", // optional, if your backend uses cookies too
+        credentials: "include", 
       });
 
       const data = await res.json();
@@ -274,7 +273,7 @@ const DocCard = () => {
               <button
                 onClick={confirmBooking}
                 className="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700"
-                disabled={bookingSuccess} // Disable Confirm button after success
+                disabled={bookingSuccess} 
               >
                 Confirm
               </button>

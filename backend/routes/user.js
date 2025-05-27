@@ -5,17 +5,14 @@ import User from '../models/User.js';
 
 const router = express.Router();
 
-// Sign-up route
 router.post('/signup', async (req, res) => {
   const { name, email, password } = req.body;
   try {
-    // Check if user already exists
     let user = await User.findOne({ email });
     if (user) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Create new user with hashed password
     user = new User({
       name,
       email,
@@ -24,7 +21,6 @@ router.post('/signup', async (req, res) => {
 
     await user.save();
 
-    // Create a JWT token
     const token = jwt.sign({ id: user._id, email: user.email }, process.env.JWT_SECRET, {
       expiresIn: '10h',
     });
@@ -39,27 +35,20 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
   try {
-    // Check if user exists
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
-
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: 'Invalid email or password' });
     }
-
-    // Create a JWT token
     const token = jwt.sign(
-      { id: user._id, email: user.email, role: user.role },
+      { userId: user._id, email: user.email, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '10h' }
     );
-
-    // Return token and role
-    res.json({ token, role: user.role }); // <-- Add role here
+    res.json({ token, role: user.role, userId: user._id }); 
   } catch (err) {
     res.status(500).json({ message: 'Server error' });
   }

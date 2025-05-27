@@ -12,7 +12,7 @@ const specialties = [
   { name: 'Ophthalmology', icon: <Eye size={32} /> },
   { name: 'General', icon: <Thermometer size={32} /> },
   { name: 'ENT', icon: <Ear size={32} /> },
-  { name: 'Many more...', icon: <MoreHorizontal size={32} /> }, // Added "Many more..." tile
+  { name: 'Many more...', icon: <MoreHorizontal size={32} /> }, 
 ];
 
 const SpecialtyGrid = () => {

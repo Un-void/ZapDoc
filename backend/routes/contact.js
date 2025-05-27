@@ -3,7 +3,6 @@ import Contact from '../models/Contact.js';
 
 const router = express.Router();
 
-// Submit contact form
 router.post('/submit', async (req, res) => {
     const { name, email, subject, message } = req.body;
     try {

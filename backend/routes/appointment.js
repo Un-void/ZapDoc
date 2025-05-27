@@ -2,31 +2,29 @@ import jwt from "jsonwebtoken";
 import express from "express";
 import mongoose from "mongoose";
 import Appointment from "../models/Appointment.js";
+import Doctor from "../models/Doctor.js";
+import User from "../models/User.js";
 
 const router = express.Router();
 
-// Middleware to verify JWT
 const authMiddleware = (req, res, next) => {
   const token =
     req.headers.authorization?.split(" ")[1] ||
     req.headers?.cookie?.split("=")[1];
 
   if (!token) {
-    console.log("No token provided in Authorization header");
     return res.status(401).json({ message: "Authentication required" });
   }
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    console.log("Token decoded:", decoded);
-    req.userId = decoded.id; // Extract userId from token payload (id: user._id)
+    req.userId = decoded.id; 
+    req.role = decoded.role; 
     next();
   } catch (err) {
-    console.error("Token verification error:", err.message);
     return res.status(401).json({ message: "Invalid or expired token" });
   }
 };
 
-// Get available slots for a doctor (optional authentication)
 router.get("/doctor/:doctorId", async (req, res) => {
   const { doctorId } = req.params;
   const { date } = req.query;
@@ -59,15 +57,53 @@ router.get("/doctor/:doctorId", async (req, res) => {
 
     res.json({ availableSlots });
   } catch (err) {
-    console.error("Fetch slots error:", err);
     res.status(500).json({ message: "Server error" });
   }
 });
 
-// Book an appointment (requires authentication)
+router.get("/user/:userId", authMiddleware, async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId" });
+    }
+    if (req.userId !== userId && req.role !== "admin") {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const appointments = await Appointment.find({ userId })
+      .populate("doctorId", "name specialization clinicName clinicAddress")
+      .lean();
+    res.json(appointments);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/doctor/:doctorId/appointments", authMiddleware, async (req, res) => {
+  const { doctorId } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(doctorId)) {
+      return res.status(400).json({ message: "Invalid doctorId" });
+    }
+    if (req.userId !== doctorId && req.role !== "admin") {
+      return res.status(403).json({ message: "Unauthorized access" });
+    }
+
+    const appointments = await Appointment.find({ doctorId })
+      .populate("userId", "name email")
+      .lean();
+    res.json(appointments);
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 router.post("/book", authMiddleware, async (req, res) => {
   const { doctorId, date, slot } = req.body;
-  const userId = req.userId; // From token
+  const userId = req.userId; 
 
   try {
     if (!mongoose.Types.ObjectId.isValid(doctorId)) {
@@ -116,7 +152,35 @@ router.post("/book", authMiddleware, async (req, res) => {
     await appointment.save();
     res.status(201).json({ message: "Appointment booked successfully" });
   } catch (err) {
-    console.error("Booking error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/cancel/:appointmentId", authMiddleware, async (req, res) => {
+  const { appointmentId } = req.params;
+
+  try {
+    if (!mongoose.Types.ObjectId.isValid(appointmentId)) {
+      return res.status(400).json({ message: "Invalid appointmentId" });
+    }
+
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not found" });
+    }
+
+    if (appointment.userId.toString() !== req.userId && appointment.doctorId.toString() !== req.userId && req.role !== "admin") {
+      return res.status(403).json({ message: "Unauthorized to cancel this appointment" });
+    }
+
+    if (appointment.status !== "booked") {
+      return res.status(400).json({ message: "Appointment cannot be cancelled" });
+    }
+
+    appointment.status = "cancelled";
+    await appointment.save();
+    res.json({ message: "Appointment cancelled successfully" });
+  } catch (err) {
     res.status(500).json({ message: "Server error" });
   }
 });
